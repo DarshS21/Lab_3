@@ -87,7 +87,7 @@ def process_sales_data(sales_csv_path, orders_dir_path):
         order_df.drop(columns=['ORDER ID'], inplace=True)
 
         # TODO: Sort the items by item number
-        order_df.sort_value(by='ITEM NUMBER', inplace=True)
+        order_df.sort_values(by='ITEM NUMBER', inplace=True)
 
         # TODO: Append a "GRAND TOTAL" row
         grand_total = order_df['TOTAL PRICE'].sum()
@@ -103,11 +103,20 @@ def process_sales_data(sales_csv_path, orders_dir_path):
         # TODO: Export the data to an Excel sheet
         worksheet_name = f'Order #{order_id}'
         order_df.to_excel(order_excel_path, index=False, sheet_name=worksheet_name)
-
+    
         # TODO: Format the Excel sheet
+        writer = pd.ExcelWriter(f'{worksheet_name}.xlsx', engine='xlsxwriter')
+        workbook = writer.book
+        worksheet = writer.sheets[f'{worksheet_name}']
+        
         # TODO: Define format for the money columns
+        format = workbook.add_format({'num_format': '$#,##0.00'}) 
+        
         # TODO: Format each colunm
+        worksheet.set_column(1, 1, 18, format)
+
         # TODO: Close the Excelwriter 
+        writer.close()
     return
 
 if __name__ == '__main__':
